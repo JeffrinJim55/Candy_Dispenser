@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candy Store</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff6bcb, #ffc3a0);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Container Styling */
+    .container {
+      text-align: center;
+      position: relative;
+      z-index: 10; /* Ensure the container is above all other elements */
+    }
+
+    .candy-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .title {
+      font-size: 2.5rem;
+      color: #ff478c;
+      margin-bottom: 10px;
+      animation: slide-in 1s ease-out forwards;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 2px solid #ff6bcb;
+      width: 70%;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .input-field:focus {
+      border-color: #ff478c;
+      box-shadow: 0 0 10px rgba(255, 103, 143, 0.6);
+      outline: none;
+    }
+
+    .action-btn {
+      background: linear-gradient(45deg, #ff6bcb, #ff478c);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(255, 103, 143, 0.4);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.4rem;
+      color: #333;
+      animation: fade-in 0.8s ease forwards;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Candy Rain Animation Container */
+    .candy-rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Ensure rain doesn't block interactions */
+      z-index: 9; /* Keep it behind the main container */
+      overflow: hidden;
+    }
+
+    /* Individual Falling Candy */
+    .falling-candy {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('https://img.icons8.com/emoji/48/000000/candy-emoji.png') no-repeat center / contain;
+      animation: fall linear forwards;
+      opacity: 0;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes slide-in {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="candy-box">
+      <h1 class="title">🍭 Welcome to Candy Bliss 🍭</h1>
+      <p class="subtitle">Get your favorite candies here!</p>
+      <input 
+        type="number" 
+        id="candyInput" 
+        placeholder="Enter the number of candies" 
+        min="1"
+        class="input-field">
+      <button id="checkStock" class="action-btn">Grab Candies</button>
+      <div id="result" class="result hidden"></div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("checkStock").addEventListener("click", function () {
+      const candyInput = parseInt(document.getElementById("candyInput").value);
+      const resultDiv = document.getElementById("result");
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = "";
+
+      if (candyInput <= 10 && candyInput > 0) {
+        let candies = "";
+        for (let i = 0; i < candyInput; i++) {
+          candies += "🍬 ";
+        }
+        resultDiv.innerHTML = `<p>Here are your candies:</p><span>${candies}</span>`;
+        startCandyRain(); // Start candy rain animation
+      } else if (candyInput > 10) {
+        resultDiv.innerHTML = `<p>Out of Stock. I only have <span>10 candies</span>.</p>`;
+      } else {
+        resultDiv.innerHTML = `<p>Please enter a valid number.</p>`;
+      }
+    });
+
+    function startCandyRain() {
+      const candyRainContainer = document.createElement("div");
+      candyRainContainer.className = "candy-rain-container";
+      document.body.appendChild(candyRainContainer);
+
+      for (let i = 0; i < 30; i++) {
+        const candy = document.createElement("div");
+        candy.className = "falling-candy";
+        candy.style.left = Math.random() * 100 + "vw";
+        candy.style.animationDuration = Math.random() * 3 + 3 + "s";
+        candyRainContainer.appendChild(candy);
+
+        candy.addEventListener("animationend", () => candy.remove());
+      }
+
+      setTimeout(() => candyRainContainer.remove(), 6000);
+    }
+  </script>
+</body>
+</html>
